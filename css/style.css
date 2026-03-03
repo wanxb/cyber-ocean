@@ -1,0 +1,24 @@
+/* global styles moved from index.html */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000510; /* 默认背景色，防止Canvas加载前白屏 */
+}
+canvas {
+    display: block;
+}
+#ui {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    color: rgba(0, 255, 255, 0.6);
+    font-family: 'Courier New', Courier, monospace;
+    pointer-events: none;
+    font-size: 12px;
+    z-index: 10;
+    line-height: 1.5;
+    text-shadow: 0 0 5px #00ffff;
+}
