@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Cyber Ocean icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#001a2e"/>
+      <stop offset="100%" stop-color="#003a58"/>
+    </linearGradient>
+    <linearGradient id="sub" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#f3a43f"/>
+      <stop offset="100%" stop-color="#ffd56a"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <path d="M0 48 C12 42, 24 52, 36 46 C44 42, 52 50, 64 44 L64 64 L0 64 Z" fill="#0b4b6d" opacity="0.85"/>
+
+  <g transform="translate(10 22)">
+    <rect x="4" y="8" width="40" height="14" rx="7" fill="url(#sub)"/>
+    <circle cx="44" cy="15" r="6" fill="#ffcc81"/>
+    <rect x="18" y="3" width="10" height="7" rx="3" fill="#ee5f66"/>
+    <circle cx="14" cy="15" r="2.2" fill="#9ddfff"/>
+    <circle cx="22" cy="15" r="2.2" fill="#9ddfff"/>
+    <circle cx="30" cy="15" r="2.2" fill="#9ddfff"/>
+  </g>
+
+  <circle cx="51" cy="13" r="1.4" fill="#8ce9ff"/>
+  <circle cx="47" cy="10" r="1" fill="#8ce9ff" opacity="0.8"/>
+</svg>

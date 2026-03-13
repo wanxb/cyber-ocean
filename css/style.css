@@ -10,15 +10,3 @@ body, html {
 canvas {
     display: block;
 }
-#ui {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    color: rgba(0, 255, 255, 0.6);
-    font-family: 'Courier New', Courier, monospace;
-    pointer-events: none;
-    font-size: 12px;
-    z-index: 10;
-    line-height: 1.5;
-    text-shadow: 0 0 5px #00ffff;
-}

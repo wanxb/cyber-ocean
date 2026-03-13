@@ -4,16 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>赛博深海鱼缸 | Cyber Ocean</title>
+    <link rel="icon" type="image/svg+xml" href="image/icon.svg">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="ui">
-        SYSTEM: ONLINE<br>
-        LIGHT_TRACKING: ACTIVE<br>
-        DEPTH_SENSOR: NORMAL
-    </div>
     <canvas id="tankCanvas"></canvas>
-    <!-- bundled script -->
-    <script src="js/bundle.js" type="text/javascript"></script>
+    <script>
+        // file:// cannot import ES modules in many browsers; use bundle fallback.
+        (function loadApp() {
+            var script = document.createElement('script');
+            if (window.location.protocol === 'file:') {
+                script.src = 'js/bundle.js';
+            } else {
+                script.type = 'module';
+                script.src = 'js/main.js';
+            }
+            document.body.appendChild(script);
+        })();
+    </script>
 </body>
 </html>

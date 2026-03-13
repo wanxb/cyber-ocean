@@ -1,5 +1,7 @@
 import { random, randomHsl } from './utils.js';
 
+const FISH_VARIANTS = ['clownfish', 'angelfish', 'tuna', 'pufferfish', 'reef'];
+
 export class Creature {
     constructor(type) {
         this.type = type;
@@ -14,7 +16,7 @@ export class Creature {
         
         switch (this.type) {
             case 'whale':
-                this.length = random(200, 350);
+                this.length = random(170, 280);
                 this.width = this.length * 0.3;
                 this.speed = random(0.3, 0.6);
                 this.color = '#34495e';
@@ -55,6 +57,7 @@ export class Creature {
                 this.speed = random(1, 3.5);
                 this.color = randomHsl();
                 this.scale = this.depth;
+                this.variant = FISH_VARIANTS[Math.floor(random(0, FISH_VARIANTS.length))];
                 this.finShape = Math.random();
                 break;
         }
@@ -123,22 +126,102 @@ export class Creature {
     }
 
     drawFish(ctx, globalTime) {
-        let tailWag = Math.sin(globalTime * 8 + this.swimOffset) * (this.width * 0.3);
+        let tailWag = Math.sin(globalTime * 8 + this.swimOffset) * (this.width * 0.35);
+        let bodyHeight = this.width;
+
+        if (this.variant === 'tuna') {
+            bodyHeight *= 0.72;
+        }
+        if (this.variant === 'pufferfish') {
+            bodyHeight *= 1.1;
+        }
+
+        let grad = ctx.createLinearGradient(-this.length * 0.4, 0, this.length * 0.4, 0);
+        grad.addColorStop(0, this.color);
+        grad.addColorStop(1, 'rgba(235,245,255,0.95)');
+        ctx.fillStyle = grad;
+
+        ctx.beginPath();
+        ctx.moveTo(-this.length * 0.45, 0);
+        ctx.bezierCurveTo(
+            -this.length * 0.15,
+            -bodyHeight,
+            this.length * 0.35,
+            -bodyHeight * 0.75,
+            this.length * 0.5,
+            0
+        );
+        ctx.bezierCurveTo(
+            this.length * 0.35,
+            bodyHeight * 0.75,
+            -this.length * 0.15,
+            bodyHeight,
+            -this.length * 0.45,
+            0
+        );
+        ctx.fill();
+
+        // Tail
         ctx.fillStyle = this.color;
         ctx.beginPath();
-        ctx.moveTo(-this.length/2, 0);
-        ctx.quadraticCurveTo(0, -this.width, this.length/2, 0);
-        ctx.quadraticCurveTo(0, this.width, -this.length/2, 0);
+        ctx.moveTo(-this.length * 0.42, 0);
+        ctx.lineTo(-this.length * 0.68, -bodyHeight * 0.6 + tailWag);
+        ctx.lineTo(-this.length * 0.58, 0 + tailWag * 0.2);
+        ctx.lineTo(-this.length * 0.68, bodyHeight * 0.6 + tailWag);
+        ctx.closePath();
         ctx.fill();
+
+        // Dorsal and ventral fins
+        ctx.fillStyle = 'rgba(255,255,255,0.25)';
         ctx.beginPath();
-        ctx.moveTo(-this.length/2 + 5, 0);
-        ctx.lineTo(-this.length/2 - this.length/4, -this.width/2 + tailWag);
-        ctx.lineTo(-this.length/2 - this.length/4, this.width/2 + tailWag);
+        ctx.moveTo(-this.length * 0.05, -bodyHeight * 0.3);
+        ctx.lineTo(this.length * 0.1, -bodyHeight * (0.9 + this.finShape * 0.2));
+        ctx.lineTo(this.length * 0.2, -bodyHeight * 0.25);
         ctx.fill();
+
+        ctx.beginPath();
+        ctx.moveTo(0, bodyHeight * 0.2);
+        ctx.lineTo(this.length * 0.18, bodyHeight * 0.65);
+        ctx.lineTo(this.length * 0.24, bodyHeight * 0.2);
+        ctx.fill();
+
+        // Variant details to improve fish identity.
+        if (this.variant === 'clownfish') {
+            ctx.fillStyle = 'rgba(255,255,255,0.92)';
+            [0.14, -0.03, -0.18].forEach(band => {
+                ctx.fillRect(this.length * band, -bodyHeight * 0.72, this.length * 0.06, bodyHeight * 1.44);
+            });
+        } else if (this.variant === 'angelfish') {
+            ctx.fillStyle = 'rgba(245, 212, 90, 0.9)';
+            ctx.beginPath();
+            ctx.moveTo(-this.length * 0.05, -bodyHeight * 0.85);
+            ctx.lineTo(this.length * 0.2, -bodyHeight * 1.45);
+            ctx.lineTo(this.length * 0.25, -bodyHeight * 0.25);
+            ctx.fill();
+        } else if (this.variant === 'pufferfish') {
+            ctx.strokeStyle = 'rgba(120,95,60,0.45)';
+            for (let i = 0; i < 12; i++) {
+                let sx = -this.length * 0.25 + i * (this.length * 0.06);
+                let sy = Math.sin(i + this.swimOffset) * bodyHeight * 0.08;
+                ctx.beginPath();
+                ctx.moveTo(sx, sy);
+                ctx.lineTo(sx, sy - bodyHeight * 0.18);
+                ctx.stroke();
+            }
+        } else if (this.variant === 'tuna') {
+            ctx.fillStyle = 'rgba(20, 40, 70, 0.38)';
+            ctx.fillRect(-this.length * 0.2, -bodyHeight * 0.75, this.length * 0.6, bodyHeight * 0.45);
+        }
+
+        // Eye
         ctx.fillStyle = 'white';
-        ctx.beginPath(); ctx.arc(this.length/3, -this.width/5, this.length/12, 0, Math.PI*2); ctx.fill();
-        ctx.fillStyle = 'black';
-        ctx.beginPath(); ctx.arc(this.length/3 + 1, -this.width/5, this.length/24, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath();
+        ctx.arc(this.length * 0.28, -bodyHeight * 0.18, this.length * 0.085, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#0f1a2e';
+        ctx.beginPath();
+        ctx.arc(this.length * 0.3, -bodyHeight * 0.18, this.length * 0.042, 0, Math.PI * 2);
+        ctx.fill();
     }
 
     drawShark(ctx, globalTime) {
@@ -169,26 +252,60 @@ export class Creature {
     }
 
     drawWhale(ctx, globalTime) {
-        let bodyWave = Math.sin(globalTime * 1.5 + this.swimOffset);
-        // no internal translation; centering handled by outer draw()
-        let grad = ctx.createLinearGradient(-this.length/4, -this.width, -this.length/4, this.width);
-        grad.addColorStop(0, '#2c3e50'); grad.addColorStop(1, '#bdc3c7');
+        let bodyWave = Math.sin(globalTime * 1.2 + this.swimOffset);
+        let bodyLen = this.length * 0.86;
+        let bodyH = this.width * 0.7;
+
+        let grad = ctx.createLinearGradient(-bodyLen * 0.5, -bodyH, bodyLen * 0.5, bodyH);
+        grad.addColorStop(0, '#2a3f52');
+        grad.addColorStop(1, '#7f94a5');
         ctx.fillStyle = grad;
 
         ctx.beginPath();
-        // draw a rounded body with nose at +this.length/4 and tail at -this.length/4
-        ctx.arc(0, 0, this.width/1.2, Math.PI/2, -Math.PI/2);
-        ctx.lineTo(-this.length/2, -this.width/4 + bodyWave * 10);
-        ctx.lineTo(-this.length/2, this.width/4 + bodyWave * 10);
+        ctx.moveTo(-bodyLen * 0.48, 0);
+        ctx.bezierCurveTo(
+            -bodyLen * 0.2,
+            -bodyH,
+            bodyLen * 0.45,
+            -bodyH * 0.8,
+            bodyLen * 0.52,
+            0
+        );
+        ctx.bezierCurveTo(
+            bodyLen * 0.45,
+            bodyH * 0.8,
+            -bodyLen * 0.2,
+            bodyH,
+            -bodyLen * 0.48,
+            0
+        );
         ctx.closePath();
         ctx.fill();
 
-        // tail fin
+        ctx.fillStyle = '#51697d';
         ctx.beginPath();
-        ctx.moveTo(-this.length/2, bodyWave * 10);
-        ctx.lineTo(-this.length/2 - 40, bodyWave * 30 - 20);
-        ctx.lineTo(-this.length/2 - 10, bodyWave * 10);
-        ctx.lineTo(-this.length/2 - 40, bodyWave * 30 + 20);
+        ctx.moveTo(-bodyLen * 0.48, bodyWave * 2);
+        ctx.lineTo(-bodyLen * 0.72, -bodyH * 0.55 + bodyWave * 10);
+        ctx.lineTo(-bodyLen * 0.58, -bodyH * 0.1 + bodyWave * 4);
+        ctx.lineTo(-bodyLen * 0.72, bodyH * 0.55 + bodyWave * 10);
+        ctx.lineTo(-bodyLen * 0.48, bodyWave * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#5f7486';
+        ctx.beginPath();
+        ctx.moveTo(-bodyLen * 0.02, -bodyH * 0.25);
+        ctx.lineTo(bodyLen * 0.08, -bodyH * 0.95);
+        ctx.lineTo(bodyLen * 0.2, -bodyH * 0.2);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#f5f9ff';
+        ctx.beginPath();
+        ctx.arc(bodyLen * 0.28, -bodyH * 0.12, bodyH * 0.08, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#102030';
+        ctx.beginPath();
+        ctx.arc(bodyLen * 0.3, -bodyH * 0.12, bodyH * 0.04, 0, Math.PI * 2);
         ctx.fill();
     }
 
